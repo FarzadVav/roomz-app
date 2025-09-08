@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum MemberRole {
+  OWNER
+  MEMBER
+}
+
+model User {
+  id          String       @id @default(cuid())
+  googleId    String       @unique
+  email       String       @unique
+  username    String
+  avatarUrl   String?
+  lastSeen    DateTime     @default(now())
+  createdAt   DateTime     @default(now())
+
+  // Relations
+  rooms       Room[]       @relation()
+  memberships RoomMember[]
+  messages    Message[]
+
+  @@map("users")
+}
+
+model Room {
+  id           String       @id @default(cuid())
+  publicName   String       @unique
+  name         String
+  passwordHash String
+  avatarUrl    String
+  description  String?
+  ownerId      String
+  createdAt    DateTime     @default(now())
+
+  // Relations
+  owner        User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  members      RoomMember[]
+  messages     Message[]
+
+  @@map("rooms")
+  @@unique([ownerId, name])
+  @@index([publicName])
+}
+
+model RoomMember {
+  id       String     @id @default(cuid())
+  roomId   String
+  userId   String
+  role     MemberRole @default(MEMBER)
+  joinedAt DateTime   @default(now())
+
+  // Relations
+  room     Room       @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("room_members")
+  @@unique([userId, roomId])
+  @@index([roomId])
+  @@index([userId])
+}
+
+model Message {
+  id        String    @id @default(cuid())
+  body      String
+  fileUrl   String?
+  userId    String
+  roomId    String
+  replyToId String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Relations
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room      Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  replyTo   Message?  @relation("MessageReply", fields: [replyToId], references: [id])
+  replies   Message[] @relation("MessageReply")
+
+  @@map("messages")
+  @@index([roomId, updatedAt])
+}
