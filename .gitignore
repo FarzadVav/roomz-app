@@ -1,22 +1,13 @@
 # dependencies
-/node_modules
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
-
-# testing
-/coverage
+/front-end/node_modules
+/back-end/node_modules
 
 # next.js
-/.next/
-/out/
+/front-end/.next/
+/front-end/out/
 
 # production
-/build
+/front-end/build
 
 # misc
 .DS_Store
@@ -24,9 +15,6 @@
 
 # debug
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)
 .env*
