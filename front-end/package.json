@@ -1,5 +1,5 @@
 {
-  "name": "front-end",
+  "name": "roomz-front-end",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",

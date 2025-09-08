@@ -1,5 +1,5 @@
 function Page() {
-  return <div>Page</div>;
+  return <div className="container mx-auto mt-3 text-blue-500">Page</div>;
 }
 
 export default Page;
